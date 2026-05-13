@@ -11,6 +11,7 @@ PowerShell-7.6.1-win-x64/
 
 # Rust build
 target/
+Cargo.lock
 Launcher.exe
 
 # IDE
