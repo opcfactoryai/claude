@@ -2,7 +2,12 @@
 node/
 PowerShell-7.6.1-win-x64/
 
-# Sensitive files
+# Claude Code runtime state
+.claude/.claude.json
+.claude/plugins/known_marketplaces.json
+.claude/sessions/
+.claude/.last-cleanup
+.claude/file-history/
 .claude/history.jsonl
 .claude/telemetry/
 .claude/backups/
