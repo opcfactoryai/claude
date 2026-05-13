@@ -4,7 +4,7 @@
 
 $ErrorActionPreference = "Stop"
 
-$ROOT = $PSScriptRoot
+$ROOT = Split-Path $PSScriptRoot -Parent
 $NODEBIN = Join-Path $ROOT "node"
 
 $env:PATH = "$NODEBIN;$env:PATH"

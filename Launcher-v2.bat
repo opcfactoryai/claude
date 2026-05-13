@@ -9,4 +9,4 @@ if not exist "%PWSH%" (
     exit /b 1
 )
 
-"%PWSH%" -NoProfile -ExecutionPolicy Bypass -File "%ROOT%Launcher-v2.ps1" %*
+"%PWSH%" -NoProfile -ExecutionPolicy Bypass -File "%ROOT%scripts\Launcher-v2.ps1" %*
