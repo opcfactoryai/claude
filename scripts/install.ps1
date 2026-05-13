@@ -51,7 +51,7 @@ try { $v = & "$ROOT\node\node.exe" -v 2>&1; Write-Host "[OK] node  $v" -Foregrou
 try { $v = & "$ROOT\PowerShell-7.6.1-win-x64\pwsh.exe" -NoProfile -Command '$PSVersionTable.PSVersion' 2>&1; Write-Host "[OK] pwsh  $v" -ForegroundColor Green } catch { Write-Host "[XX] pwsh failed" -ForegroundColor Red; $ok = $false }
 
 if ($ok) {
-    Write-Host "`n  Install complete. Run .\Launcher-v2.bat to start.`n" -ForegroundColor Cyan
+    Write-Host "`n  Install complete. Run .\Launcher.bat to start.`n" -ForegroundColor Cyan
 } else {
     Write-Host "`n  Install failed. Check errors above.`n" -ForegroundColor Red
     exit 1

@@ -160,13 +160,11 @@ src/
 ├── app.rs           # egui App：状态机 + UI 渲染（暗色主题）
 ├── auth.rs          # AuthStore (load/merge_tokens/is_token_valid) + UserInfo + LoginState
 ├── auth_check.rs    # 启动时 auth.json 结构完整性 + JWT 过期校验
-├── launcher.rs      # 环境自检 (EnvCheck + verify_execution) + MessageBoxW 错误弹窗
-├── launcher_v2.rs   # 通过 cmd.exe /c Launcher.bat 启动 Claude
+├── launcher.rs      # MessageBoxW 错误弹窗 + 通过 cmd.exe /c Launcher.bat 启动 Claude
 ├── oauth.rs         # OAuth 2.0 PKCE 登录（TcpListener 回执 + ureq HTTP）
 └── job.rs           # Windows Job Object 防孤儿进程
 
-Launcher.bat         # 启动脚本（PATH / env 设置 + bash -lc 启动 claude）
-Launcher-v2.bat      # 备用启动脚本
+Launcher.bat         # 启动脚本（自检环境 + PATH 注入 + 启动 claude）
 ```
 
 ## GUI 布局 (480×620)

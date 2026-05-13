@@ -103,7 +103,7 @@ impl eframe::App for DesignGPTApp {
         if matches!(self.state, LoginState::Launching) {
             ctx.send_viewport_cmd(egui::ViewportCommand::Visible(false));
             let root = self.root.clone();
-            std::thread::spawn(move || match crate::launcher_v2::launch_claude_via_bat(&root) {
+            std::thread::spawn(move || match crate::launcher::launch_claude_via_bat(&root) {
                 Ok(code) => std::process::exit(code),
                 Err(e) => {
                     show_launch_error(&e.to_string());

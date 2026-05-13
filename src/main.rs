@@ -30,7 +30,7 @@
 //             │
 //             ├─ GUI 隐藏 ViewportCommand::Visible(false)
 //             └─ launch_claude_via_bat() (独立线程)
-//                  ├─ cmd.exe /c Launcher-v2.bat
+//                  ├─ cmd.exe /c Launcher.bat
 //                  ├─ bat 负责 env 自检 + PATH 注入 + 启动 claude
 //                  └─ child.wait() → std::process::exit(code)
 //                       └─ Job Object 终止所有残留子进程
@@ -40,7 +40,6 @@ mod auth;
 mod auth_check;
 mod job;
 mod launcher;
-mod launcher_v2;
 mod oauth;
 
 use app::DesignGPTApp;

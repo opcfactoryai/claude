@@ -1,6 +1,6 @@
 #Requires -Version 7
-# Launcher v2 — PowerShell native launcher for Claude Code
-# No Git / bash dependency. Uses portable Node.js + PowerShell 7.6.
+# Launcher — PowerShell native launcher for Claude Code
+# Uses portable Node.js + PowerShell 7.6.
 
 $ErrorActionPreference = "Stop"
 
