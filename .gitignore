@@ -12,6 +12,7 @@ PowerShell-7.6.1-win-x64/
 
 # Rust build
 target/
+Launcher.exe
 
 # IDE
 .vscode/
