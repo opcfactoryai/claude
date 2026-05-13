@@ -3,7 +3,6 @@ node/
 PowerShell-7.6.1-win-x64/
 
 # Sensitive files
-.claude/auth.json
 .claude/history.jsonl
 .claude/telemetry/
 .claude/backups/
