@@ -14,7 +14,7 @@
 
 - **模式感知工作流**：无论 Agent 自己持有 API key、宿主带原生图像工具、还是完全没有图像工具，同一份 Skill 都能用。
 - **结构化模板库**：18 大类、70+ 个提示词模板，覆盖海报、UI 样机、产品图、信息图、学术图、技术架构图、漫画、头像、编辑工作流。
-- **可复用的 prompt + 图片归档**：默认落盘到 `garden-gpt-image-2/prompt/` 和 `garden-gpt-image-2/image/`，按 `<task-slug>-<timestamp>` 命名。
+- **可复用的 prompt + 图片归档**：默认落盘到 `garden/prompt/` 和 `garden/image/`，按 `<task-slug>-<timestamp>` 命名。
 
 ---
 
@@ -34,7 +34,7 @@ node skills/gpt-image-2/scripts/check-mode.js --json
 |---|---|---|
 | **A · Garden 本地生图** | `ENABLE_GARDEN_IMAGEGEN` 为真 **且** 有 `OPENAI_API_KEY` | 端到端：选模板 → 渲染 prompt → 调用 `generate-chat.js` / `edit.js` → 图片落盘 |
 | **B · Host-Native 委托宿主出图** | 未启用 Garden，但宿主 Agent 自带图像工具（`image_generation` / `dalle` / `nano_banana` / 图像 MCP 等） | 渲染好 prompt 后**交给宿主自带的图像工具**出图 |
-| **C · Advisor 纯提示词顾问** | 未启用 Garden，宿主也没有图像工具 | 退化成"高质量 prompt 撰写顾问"——把 prompt 落盘到 `garden-gpt-image-2/prompt/`，告诉用户去 ChatGPT / Midjourney / DALL·E / Sora / Nano Banana / 自己的网关里执行 |
+| **C · Advisor 纯提示词顾问** | 未启用 Garden，宿主也没有图像工具 | 退化成"高质量 prompt 撰写顾问"——把 prompt 落盘到 `garden/prompt/`，告诉用户去 ChatGPT / Midjourney / DALL·E / Sora / Nano Banana / 自己的网关里执行 |
 
 三种模式都建议落盘 prompt 文件（A、C 必须，B 推荐），但只有 A 会产出图片文件——B 由宿主决定，C 不可能。
 
@@ -62,7 +62,7 @@ node skills/gpt-image-2/scripts/generate-chat.js \
 
 ```bash
 node skills/gpt-image-2/scripts/generate-chat.js \
-  --promptfile garden-gpt-image-2/prompt/poster-20260424-153045.md
+  --promptfile garden/prompt/poster-20260424-153045.md
 ```
 
 ### 3. 编辑已有图片
@@ -141,15 +141,15 @@ skills/gpt-image-2/
 
 | 内容 | 落盘位置 | 适用模式 |
 |---|---|---|
-| 渲染好的 prompt | `garden-gpt-image-2/prompt/<task-slug>-<timestamp>.md` | A / B / C |
-| 生成的图片 | `garden-gpt-image-2/image/<task-slug>-<timestamp>.png` | 仅 A（B 由宿主决定，C 不产出） |
+| 渲染好的 prompt | `garden/prompt/<task-slug>-<timestamp>.md` | A / B / C |
+| 生成的图片 | `garden/image/<task-slug>-<timestamp>.png` | 仅 A（B 由宿主决定，C 不产出） |
 
 `<task-slug>` 由用户请求自动派生，`<timestamp>` 是 `YYYYMMDD-HHMMSS`。
 
 示例：
 
-- `garden-gpt-image-2/prompt/live-commerce-ui-20260424-153045.md`
-- `garden-gpt-image-2/image/vr-headset-exploded-view-20260424-153102.png`
+- `garden/prompt/live-commerce-ui-20260424-153045.md`
+- `garden/image/vr-headset-exploded-view-20260424-153102.png`
 
 ---
 

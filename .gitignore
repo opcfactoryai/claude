@@ -19,6 +19,10 @@ target/
 Cargo.lock
 Launcher.exe
 
+# Generated images and prompts
+garden/image/
+garden/prompt/
+
 # IDE
 .vscode/
 .idea/

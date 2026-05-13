@@ -14,7 +14,7 @@ It bundles:
 
 - A **mode-aware workflow** so the same skill works whether the agent itself owns the image API key, the host has its own image tool, or there is no image tool at all.
 - A **structured template library** of 18 categories and 70+ prompt templates covering posters, UI mockups, product visuals, infographics, academic figures, technical diagrams, comics, avatars, and editing workflows.
-- **Reproducible prompt + image archival** under `garden-gpt-image-2/prompt/` and `garden-gpt-image-2/image/` with task-slug + timestamp naming.
+- **Reproducible prompt + image archival** under `garden/prompt/` and `garden/image/` with task-slug + timestamp naming.
 
 ---
 
@@ -34,7 +34,7 @@ The output picks one of three modes:
 |---|---|---|
 | **A — Garden local** | `ENABLE_GARDEN_IMAGEGEN` truthy **AND** `OPENAI_API_KEY` present | End-to-end: pick template → render prompt → call `generate-chat.js` / `edit.js` → image lands on disk |
 | **B — Host-native** | Garden disabled, but the host agent already has an image tool (`image_generation`, `dalle`, `nano_banana`, image MCP, etc.) | Render the prompt, then **delegate** image generation to the host's own tool |
-| **C — Advisor** | Garden disabled, host has no image tool | Skill degrades into a high-quality prompt writer — saves the rendered prompt to `garden-gpt-image-2/prompt/` and instructs the user to paste it into ChatGPT / Midjourney / DALL·E / Sora / Nano Banana / their own gateway |
+| **C — Advisor** | Garden disabled, host has no image tool | Skill degrades into a high-quality prompt writer — saves the rendered prompt to `garden/prompt/` and instructs the user to paste it into ChatGPT / Midjourney / DALL·E / Sora / Nano Banana / their own gateway |
 
 In all three modes, prompt files are saved (mode A & C must save, mode B is recommended for reuse). Only mode A produces an image file; mode B leaves that to the host, mode C cannot.
 
@@ -62,7 +62,7 @@ node skills/gpt-image-2/scripts/generate-chat.js \
 
 ```bash
 node skills/gpt-image-2/scripts/generate-chat.js \
-  --promptfile garden-gpt-image-2/prompt/poster-20260424-153045.md
+  --promptfile garden/prompt/poster-20260424-153045.md
 ```
 
 ### 3. Edit an existing image
@@ -141,15 +141,15 @@ Unless the user specifies otherwise:
 
 | What | Where | Used in |
 |---|---|---|
-| Rendered prompts | `garden-gpt-image-2/prompt/<task-slug>-<timestamp>.md` | A / B / C |
-| Generated images | `garden-gpt-image-2/image/<task-slug>-<timestamp>.png` | A only (B = host decides, C = none) |
+| Rendered prompts | `garden/prompt/<task-slug>-<timestamp>.md` | A / B / C |
+| Generated images | `garden/image/<task-slug>-<timestamp>.png` | A only (B = host decides, C = none) |
 
 `<task-slug>` is auto-derived from the user's request; `<timestamp>` is `YYYYMMDD-HHMMSS`.
 
 Examples:
 
-- `garden-gpt-image-2/prompt/live-commerce-ui-20260424-153045.md`
-- `garden-gpt-image-2/image/vr-headset-exploded-view-20260424-153102.png`
+- `garden/prompt/live-commerce-ui-20260424-153045.md`
+- `garden/image/vr-headset-exploded-view-20260424-153102.png`
 
 ---
 

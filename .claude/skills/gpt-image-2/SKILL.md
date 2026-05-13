@@ -38,7 +38,7 @@ Skill 启动时会自动执行 check-mode.js 检测运行模式。
 **行为**：完整端到端跑通"选模板 → 写 prompt → 调用脚本 → 出图落盘"。
 
 - 用 `scripts/generate-chat.js` 文本生图、`scripts/edit.js` 编辑现有图。
-- prompt 默认落盘到 `garden-gpt-image-2/prompt/`、图片落盘到 `garden-gpt-image-2/image/`。
+- prompt 默认落盘到 `garden/prompt/`、图片落盘到 `garden/image/`。
 - 这是最强的模式：你是图像工具的"持有者"。
 
 ### Mode B · Host-Native 委托宿主出图
@@ -56,7 +56,7 @@ Skill 启动时会自动执行 check-mode.js 检测运行模式。
 1. 仍按"选模板 → 填字段 → 渲染最终 prompt"的流程走。
 2. **不要调用 `node scripts/generate-chat.js`**（没有 API key、必失败）。
 3. 直接调用宿主自带的图像工具，把渲染好的 prompt 作为输入。
-4. 如用户希望可顺手把 prompt 文件保存到 `garden-gpt-image-2/prompt/`，但图片去向由宿主决定，不强制。
+4. 如用户希望可顺手把 prompt 文件保存到 `garden/prompt/`，但图片去向由宿主决定，不强制。
 
 ### Mode C · Advisor 纯提示词顾问
 
@@ -65,7 +65,7 @@ Skill 启动时会自动执行 check-mode.js 检测运行模式。
 **行为**：本 Skill 退化为"高质量 prompt 撰写顾问"——
 
 1. 按"选模板 → 填字段 → 渲染最终 prompt"流程走，缺信息就问用户。
-2. 把最终 prompt **直接打印给用户** + 保存一份到 `garden-gpt-image-2/prompt/<task-slug>-<timestamp>.md`。
+2. 把最终 prompt **直接打印给用户** + 保存一份到 `garden/prompt/<task-slug>-<timestamp>.md`。
 3. 附一句简短的"如何使用"建议（如：丢进 ChatGPT / Midjourney / DALL·E / Sora / Nano Banana / 自己后端 / 第三方 GPT Image 2 网关）。
 4. **不要假装出图成功**。明确告知用户："已生成可直接复用的高质量 prompt，请用你的图像工具执行。"
 
@@ -116,8 +116,8 @@ Skill 启动时会自动执行 check-mode.js 检测运行模式。
 
 如果用户没有明确指定输出路径，统一使用当前工作区下的：
 
-- 提示词目录：`garden-gpt-image-2/prompt/`（**A / B / C 三种模式都建议用**，方便复用与版本管理）
-- 图片目录：`garden-gpt-image-2/image/`（**仅 Mode A 使用**；Mode B 由宿主决定，Mode C 不产生图）
+- 提示词目录：`garden/prompt/`（**A / B / C 三种模式都建议用**，方便复用与版本管理）
+- 图片目录：`garden/image/`（**仅 Mode A 使用**；Mode B 由宿主决定，Mode C 不产生图）
 
 如果目录不存在，脚本（Mode A）必须自动创建；Mode B / C 在写 prompt 前手动 `mkdir -p`。
 
@@ -127,8 +127,8 @@ Skill 启动时会自动执行 check-mode.js 检测运行模式。
 
 命名规则：
 
-- 提示词：`garden-gpt-image-2/prompt/<task-slug>-<timestamp>.md`
-- 图片：`garden-gpt-image-2/image/<task-slug>-<timestamp>.png`
+- 提示词：`garden/prompt/<task-slug>-<timestamp>.md`
+- 图片：`garden/image/<task-slug>-<timestamp>.png`
 
 其中：
 
@@ -137,10 +137,10 @@ Skill 启动时会自动执行 check-mode.js 检测运行模式。
 
 示例：
 
-- `garden-gpt-image-2/prompt/live-commerce-ui-20260424-153045.md`
-- `garden-gpt-image-2/image/live-commerce-ui-20260424-153045.png`
-- `garden-gpt-image-2/prompt/vr-headset-exploded-view-20260424-153102.md`
-- `garden-gpt-image-2/image/vr-headset-exploded-view-20260424-153102.png`
+- `garden/prompt/live-commerce-ui-20260424-153045.md`
+- `garden/image/live-commerce-ui-20260424-153045.png`
+- `garden/prompt/vr-headset-exploded-view-20260424-153102.md`
+- `garden/image/vr-headset-exploded-view-20260424-153102.png`
 
 ## Prompt 保存规则
 
@@ -153,14 +153,14 @@ Skill 启动时会自动执行 check-mode.js 检测运行模式。
 通用规则（适用三种模式）：
 
 1. 如果用户显式给了 prompt 文件路径，可直接使用该文件作为输入。
-2. 如果用户直接给的是文本 prompt，也要先把最终 prompt 保存到 `garden-gpt-image-2/prompt/`。
+2. 如果用户直接给的是文本 prompt，也要先把最终 prompt 保存到 `garden/prompt/`。
 3. 如果用户显式指定了 `--prompt-output`，则尊重用户指定路径。
 4. 否则使用默认命名规则自动保存。
 
 ## 图片保存规则（仅 Mode A）
 
 1. 如果用户显式指定了 `--image` 或 `--output`，则尊重用户指定路径。
-2. 否则默认保存到 `garden-gpt-image-2/image/`。
+2. 否则默认保存到 `garden/image/`。
 3. 文件名应和当前任务语义相关，并附加时间戳。
 
 Mode B 由宿主图像工具决定保存方式；Mode C 不产生图片。
@@ -187,7 +187,7 @@ node .claude/skills/gpt-image-2/scripts/generate-chat.js \
 
 ```bash
 node skills/gpt-image-2/scripts/generate-chat.js \
-  --promptfile garden-gpt-image-2/prompt/poster-20260424-153045.md
+  --promptfile garden/prompt/poster-20260424-153045.md
 ```
 
 ### 3. 编辑已有图片（Mode A）
@@ -212,7 +212,7 @@ node skills/gpt-image-2/scripts/edit.js \
 没有命令行入口——本 Skill 此时只是**提示词工程指南**：
 
 - **Mode B**：渲染好最终 prompt → 调用宿主自带的 `image_generation` 类工具（参数中传入 prompt）→ 拿到图。
-- **Mode C**：渲染好最终 prompt → 保存到 `garden-gpt-image-2/prompt/<task-slug>-<timestamp>.md` → 把内容直接展示给用户 → 提示用户在哪些图像工具中可以直接复用。
+- **Mode C**：渲染好最终 prompt → 保存到 `garden/prompt/<task-slug>-<timestamp>.md` → 把内容直接展示给用户 → 提示用户在哪些图像工具中可以直接复用。
 
 ## JSON 模板工作方式
 
@@ -446,9 +446,9 @@ CS / CV / ML 方向：
 
 到此 prompt 已渲染好。下面按模式分叉：
 
-7-A. **Mode A**：把最终 prompt 保存到 `garden-gpt-image-2/prompt/`，调用 `scripts/generate-chat.js` 或 `scripts/edit.js`，图片落到 `garden-gpt-image-2/image/`。
-7-B. **Mode B**：把最终 prompt 直接传给宿主的图像工具调用；按需保存 prompt 副本到 `garden-gpt-image-2/prompt/`。
-7-C. **Mode C**：把最终 prompt 保存到 `garden-gpt-image-2/prompt/<task-slug>-<timestamp>.md`，并把完整 prompt 在对话中展示给用户，附一句简短的"如何使用 / 推荐工具"建议。
+7-A. **Mode A**：把最终 prompt 保存到 `garden/prompt/`，调用 `scripts/generate-chat.js` 或 `scripts/edit.js`，图片落到 `garden/image/`。
+7-B. **Mode B**：把最终 prompt 直接传给宿主的图像工具调用；按需保存 prompt 副本到 `garden/prompt/`。
+7-C. **Mode C**：把最终 prompt 保存到 `garden/prompt/<task-slug>-<timestamp>.md`，并把完整 prompt 在对话中展示给用户，附一句简短的"如何使用 / 推荐工具"建议。
 
 8. 任务结束后用一句话告诉用户：当前模式是什么、prompt 落在哪、图（如有）落在哪。
 
