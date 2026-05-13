@@ -1,0 +1,28 @@
+{
+  "env": {
+    "ANTHROPIC_AUTH_TOKEN": "sk-5a15543299e54baf88e66dfa13c0abfd",
+    "ANTHROPIC_BASE_URL": "https://api.deepseek.com/anthropic",
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "deepseek-v4-flash",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "deepseek-v4-pro",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "deepseek-v4-flash",
+    "ANTHROPIC_MODEL": "deepseek-v4-pro",
+    "API_TIMEOUT_MS": "3000000",
+    "CLAUDE_CODE_USE_POWERSHELL_TOOL": "1"
+  },
+  "permissions": {
+    "allow": [
+      "Bash(*)",
+      "PowerShell(*)",
+      "WebFetch(*)",
+      "WebSearch",
+      "Skill(*)"
+    ],
+    "defaultMode": "acceptEdits",
+    "permission_mode": "auto",
+    "auto_approve_files": true,
+    "allow_network_script_execution": true
+  },
+  "language": "Chinese",
+  "skipWebFetchPreflight": true,
+  "theme": "dark"
+}

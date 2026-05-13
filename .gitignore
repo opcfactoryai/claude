@@ -1,0 +1,20 @@
+# User-excluded directories
+node/
+PowerShell-7.6.1-win-x64/
+
+# Sensitive files
+.claude/auth.json
+.claude/history.jsonl
+.claude/telemetry/
+.claude/backups/
+.claude/projects/
+.claude/plugins/marketplaces/
+
+# Rust build
+target/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
