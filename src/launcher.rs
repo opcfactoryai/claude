@@ -25,7 +25,7 @@ fn to_wide(s: &str) -> Vec<u16> {
 }
 
 pub fn show_launch_error(reason: &str) {
-    let text = to_wide(&format!("启动失败：{}\n\n请检查运行环境是否完整。", reason));
+    let text = to_wide(&format!("启动失败：{}\n请检查运行环境是否完整。", reason));
     let caption = to_wide("DesignGPT 启动错误");
     unsafe {
         MessageBoxW(0, text.as_ptr(), caption.as_ptr(), MB_ICONERROR);
@@ -43,7 +43,7 @@ pub fn show_launch_error(reason: &str) {
 ///   4. 直接执行 claude.exe
 ///
 /// 此函数阻塞直到 bat / Claude 退出，返回 exit code。
-pub fn launch_claude_via_bat(root: &PathBuf) -> Result<i32> {
+pub fn launch_claude(root: &PathBuf) -> Result<i32> {
     let bat = root.join("Launcher.bat");
     if !bat.exists() {
         anyhow::bail!(

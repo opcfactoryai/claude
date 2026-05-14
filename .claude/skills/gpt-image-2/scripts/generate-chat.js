@@ -8,6 +8,7 @@ import {
   buildBaseUrl,
   buildDefaultImagePath,
   buildDefaultPromptPath,
+  formatApiErrorTable,
   loadAmbientEnv,
   readPromptInput,
   resolveOutput,
@@ -137,6 +138,11 @@ async function run() {
 
 run().catch((error) => {
   const message = error instanceof Error ? error.message : String(error);
-  console.error(message);
+  const statusMatch = message.match(/(?:Chat API|Image API|API)\s+error\s*\((\d+)\)/);
+  if (statusMatch) {
+    formatApiErrorTable(parseInt(statusMatch[1], 10), message);
+  } else {
+    console.error(message);
+  }
   process.exit(1);
 });

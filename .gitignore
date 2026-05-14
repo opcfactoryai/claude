@@ -1,6 +1,7 @@
 # User-excluded directories
 node/
 PowerShell-7.6.1-win-x64/
+terminal-1.26.1321.0/
 
 # Claude Code runtime state
 .claude/.claude.json

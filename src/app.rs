@@ -103,7 +103,7 @@ impl eframe::App for DesignGPTApp {
         if matches!(self.state, LoginState::Launching) {
             ctx.send_viewport_cmd(egui::ViewportCommand::Visible(false));
             let root = self.root.clone();
-            std::thread::spawn(move || match crate::launcher::launch_claude_via_bat(&root) {
+            std::thread::spawn(move || match crate::launcher::launch_claude(&root) {
                 Ok(code) => std::process::exit(code),
                 Err(e) => {
                     show_launch_error(&e.to_string());
@@ -157,7 +157,7 @@ impl DesignGPTApp {
             ui.set_max_width(max_w);
             ui.add_space(40.0);
 
-            ui.label(RichText::new("DesignGPT").size(28.0).color(ACCENT));
+            ui.label(RichText::new("Claude").size(28.0).color(ACCENT));
             ui.add_space(24.0);
 
             self.render_account_card(ui);

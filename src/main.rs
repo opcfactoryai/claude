@@ -29,7 +29,7 @@
 //        └─ [启  动] ──→ 仅 [已登录] 可点击
 //             │
 //             ├─ GUI 隐藏 ViewportCommand::Visible(false)
-//             └─ launch_claude_via_bat() (独立线程)
+//             └─ launch_claude() (独立线程)
 //                  ├─ cmd.exe /c Launcher.bat
 //                  ├─ bat 负责 env 自检 + PATH 注入 + 启动 claude
 //                  └─ child.wait() → std::process::exit(code)
@@ -65,7 +65,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     };
 
     eframe::run_native(
-        "DesignGPT Launcher",
+        "Claude Launcher",
         native_options,
         Box::new(move |cc| {
             setup_chinese_font(&cc.egui_ctx);

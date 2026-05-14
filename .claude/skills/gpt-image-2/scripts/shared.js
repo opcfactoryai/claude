@@ -223,3 +223,81 @@ export function appendIfPresent(target, key, value) {
   if (value === undefined || value === null || value === "") return;
   target.append(key, String(value));
 }
+
+// ── API error friendly formatting ──
+
+const HTTP_STATUS_LABELS = {
+  400: "请求参数错误",
+  401: "令牌无效或已过期",
+  402: "账户余额不足",
+  403: "API Key 已被禁用",
+  429: "请求配额超限",
+  500: "服务端内部错误",
+  502: "网关错误",
+  503: "服务暂时不可用",
+};
+
+const RED = "\x1b[31m";
+const RESET = "\x1b[0m";
+
+function extractStatusCode(message) {
+  const m = message.match(/(?:Chat API|Image API)\s+error\s*\((\d+)\)/);
+  return m ? parseInt(m[1], 10) : null;
+}
+
+function extractApiMessage(message) {
+  try {
+    const json = JSON.parse(message.replace(/^.*?error\s*\(\d+\):\s*/, ""));
+    if (json?.error?.message) return json.error.message;
+    if (json?.error?.code) return json.error.code;
+    return null;
+  } catch {
+    if (message.includes("Invalid token")) return "Invalid token";
+    return null;
+  }
+}
+
+export function formatApiErrorTable(statusCode, rawMessage) {
+  const label = HTTP_STATUS_LABELS[statusCode] || `HTTP ${statusCode}`;
+  const apiMsg = extractApiMessage(rawMessage);
+  const codeDesc = apiMsg ? `${statusCode} — ${label} (${apiMsg})` : `${statusCode} — ${label}`;
+
+  const W = 56;
+
+  function row(text) {
+    // text: visible string, no ANSI codes
+    return `│  ${text}${" ".repeat(Math.max(0, W - 2 - [...text].length))}│`;
+  }
+
+  function sep(l, m, r) {
+    return `│${l}${m.repeat(W - 2)}${r}│`;
+  }
+
+  const lines = [
+    sep("┌", "─", "┐"),
+    row(""),
+    row("API 调用失败"),
+    row(""),
+    sep("├", "─", "┤"),
+    row(""),
+    row("由于计费策略或账户原因，API 暂不可用。"),
+    row("请联系销售 / 管理员："),
+    row(""),
+    row("18120559523  管桦"),
+    row(""),
+    sep("├", "─", "┤"),
+    row(""),
+    // Error code line — red, visible width calculated first
+    // placeholder, built below
+    row(""),
+    sep("└", "─", "┘"),
+  ];
+
+  const codePrefix = "错误码：";
+  const codeVisible = [...(codePrefix + codeDesc)].length;
+  const codeLeft = `│  ${RED}${codePrefix}`;
+  const codeRight = `${" ".repeat(Math.max(0, W - 2 - codeVisible))}${RESET}│`;
+  lines[lines.length - 2] = `${codeLeft}${codeDesc}${codeRight}`;
+
+  console.error(lines.join("\n"));
+}

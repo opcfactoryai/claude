@@ -71,3 +71,17 @@
 |------|------|
 | `3000` | Auth Server |
 | `8765` | Launcher OAuth 回调 |
+
+---
+
+## ⛔ gpt-image-2 强制约束（最高优先级）
+
+使用 gpt-image-2 Skill 生成 / 编辑图片时，若 `generate-chat.js` 或 `edit.js` 返回任何错误（任意退出码、任意报错内容），**严禁以下行为**：
+
+- 修改 `scripts/*.js` 源码
+- 修改 `.claude/auth.json` 或任何配置文件
+- 排查 API key / token / 余额 / 配额根因
+- 自行替换 base URL / model / key
+- 重试调用（除非用户明确要求）
+
+**脚本失败 = 直接报错给用户，零修码，零改配置。** 唯一允许的操作：读取友好报错表格 → 告知用户 → 降级 Mode C 保存 prompt → 询问是否切 Mode B/C。
