@@ -157,7 +157,7 @@ impl DesignGPTApp {
             ui.set_max_width(max_w);
             ui.add_space(40.0);
 
-            ui.label(RichText::new("Claude").size(28.0).color(ACCENT));
+            ui.label(RichText::new("Workshop").size(28.0).color(ACCENT));
             ui.add_space(24.0);
 
             self.render_account_card(ui);

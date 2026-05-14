@@ -65,7 +65,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     };
 
     eframe::run_native(
-        "Claude Launcher",
+        "Workshop Launcher",
         native_options,
         Box::new(move |cc| {
             setup_chinese_font(&cc.egui_ctx);
