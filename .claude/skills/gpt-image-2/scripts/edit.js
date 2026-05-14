@@ -8,11 +8,11 @@ import {
   buildDefaultImagePath,
   ensureFilesExist,
   extractGeneratedBytes,
-  formatApiErrorTable,
   loadAmbientEnv,
+  printApiError,
+  printResult,
   mimeFor,
   postMultipart,
-  printJson,
   readPromptInput,
   resolveOutput,
   saveImage,
@@ -205,27 +205,20 @@ async function run() {
   const bytes = await extractGeneratedBytes(json);
   await saveImage(outputPath, bytes);
 
-  if (cfg.json) {
-    printJson({
-      savedImage: outputPath,
-      savedPrompt: promptPath,
-      model: cfg.model || process.env.OPENAI_IMAGE_MODEL || DEFAULT_MODEL,
-      requestUrl: url,
-      apiResponse: json,
-    });
-    return;
-  }
-
-  console.log(outputPath);
+  printResult({
+    image: { path: outputPath },
+    prompt: { path: promptPath },
+    model: cfg.model || process.env.OPENAI_IMAGE_MODEL || DEFAULT_MODEL,
+  });
 }
 
 run().catch((error) => {
   const message = error instanceof Error ? error.message : String(error);
-  const statusMatch = message.match(/(?:Chat API|Image API|API)\s+error\s*\((\d+)\)/);
+  const statusMatch = message.match(/(?:Chat API|Image API)\s+error\s*\((\d+)\)/);
   if (statusMatch) {
-    formatApiErrorTable(parseInt(statusMatch[1], 10), message);
+    printApiError(parseInt(statusMatch[1], 10), message);
   } else {
-    console.error(message);
+    printResult({ ok: false, error: { code: "INTERNAL_ERROR", message } });
   }
   process.exit(1);
 });

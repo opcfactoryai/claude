@@ -23,7 +23,7 @@ description: 面向 GPT Image 2 的图像生成 / 编辑技能。可在 3 种环
 | 修改 `scripts/*.js` 源代码 | 读取脚本输出的友好报错表格 |
 | 修改 `.claude/auth.json` 或任何配置文件 | 告知用户：API 不可用，附联系方式 |
 | 排查 API key / token / 余额 / 配额根因 | 降级到 Mode C：保存 prompt，展示给用户 |
-| 重试调用（除非用户明确要求） | 询问用户：是否切到 Mode B / C，或自行联系管理员 |
+| 重试调用（除非用户明确要求） | 展示错误框，不询问用户切模式 |
 | 自行替换 base URL / model / key | 不做任何环境变量或文件改动 |
 
 **一句话：脚本失败 = 直接报错给用户，零修码，零改配置，零自行排查。** 你唯一的职责是把渲染好的 prompt 交给用户（Mode C），或让用户自己解决 API 侧问题。
@@ -32,6 +32,71 @@ description: 面向 GPT Image 2 的图像生成 / 编辑技能。可在 3 种环
 
 - 一级：分类目录
 - 二级：单模板 Markdown 文件
+
+## 脚本 JSON 输出协议（Mode A 专用）
+
+`generate-chat.js` / `edit.js` 统一输出单行 JSON 到 **stdout**，不再向 stderr 输出格式化文本。
+
+### 成功
+
+```json
+{"ok":true,"image":{"path":"garden/image/xxx.png","url":"https://..."},"prompt":{"path":"garden/prompt/xxx.md"},"model":"gpt-image-2"}
+```
+
+Skill 应解析后展示：
+
+- 图片路径 + 提示词路径
+- 如有 `url`，可附原始链接
+
+### 失败（API 错误）
+
+```json
+{"ok":false,"error":{"code":"API_ERROR","statusCode":401,"label":"令牌无效或已过期","message":"Invalid token (request id: 2026...)"}}
+```
+
+字段说明：
+
+| 字段 | 含义 |
+|------|------|
+| `code` | 错误类别：`API_ERROR` / `INTERNAL_ERROR` |
+| `statusCode` | HTTP 状态码（仅 API_ERROR） |
+| `label` | 中文原因描述（仅 API_ERROR） |
+| `message` | 服务端原始报错信息 |
+
+**Skill 必须按以下规则展示（Unicode 框线 + 粗体 + 红色错误码，突出视觉层次）：**
+
+```
+┌——————————————————————————————————————————————┐
+│                                              │
+│  ⚠️ **API 调用失败**                         │
+│                                              │
+│  <red>错误码：{statusCode} — {label}</red>    │
+│                                              │
+│  **由于计费策略或账户原因，API 暂不可用。**     │
+│  **请联系管理员(VX)：18120559523 管桦**     │
+│                                              │
+└——————————————————————————————————————————————┘
+```
+
+1. 错误信息必须用 Unicode 框线（`┌└┐┘│—`）包裹，不可用 code block 套壳。
+2. 框内 `错误码` 行强制使用 **红色**（用 `<red>...</red>` 标注）。
+3. 框内提示与联系方式必须 **加粗**（`**...**`）。
+4. 框内 **不显示** `message` 原文（太冗长，破坏框的视觉紧凑感）。
+5. 框外 **不询问** 用户是否切换模式，直接展示错误框即可。
+
+### 失败（内部错误）
+
+```json
+{"ok":false,"error":{"code":"INTERNAL_ERROR","message":"File not found: /path/to/file"}}
+```
+
+Skill 应展示：操作失败 + `message` 原文。
+
+### 重要约束
+
+- JS 脚本 **绝不** 向 stderr / stdout 输出任何用户可读格式化文本，只输出 JSON
+- 所有颜色、格式、文案补全由 Skill 侧负责
+- 错误码行 Skill 侧强制使用 **红色** 标注
 
 ## 运行模式（必读，做任何事之前先确定）
 
@@ -97,7 +162,7 @@ Skill 启动时会自动执行 check-mode.js 检测运行模式。
 ### 模式不确定时
 
 - 如果你判断不清自己是 B 还是 C，**直接问用户一句**："是用你环境里的图像工具出图，还是只要我写好提示词？"
-- Mode A 调脚本失败 → 若为 API 错误（401 / 402 / 403 / 429 / 5xx），`generate-chat.js` / `edit.js` 自动输出红色友好表格（含中文原因 + 联系方式），Agent 随后询问"切到 B / C 吗？"；非 API 错误（如文件不存在）仍输出原始报错
+- Mode A 调脚本失败 → 脚本输出 JSON 到 stdout（结构见"脚本 JSON 输出协议"），Skill 解析 JSON 后统一展示。API 错误时 Skill 用框线 + 红色错误码展示，不询问用户切模式；内部错误时展示 message 原文
 
 ## 用户输入工具
 

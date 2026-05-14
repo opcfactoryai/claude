@@ -237,9 +237,6 @@ const HTTP_STATUS_LABELS = {
   503: "服务暂时不可用",
 };
 
-const RED = "\x1b[31m";
-const RESET = "\x1b[0m";
-
 function extractStatusCode(message) {
   const m = message.match(/(?:Chat API|Image API)\s+error\s*\((\d+)\)/);
   return m ? parseInt(m[1], 10) : null;
@@ -257,47 +254,20 @@ function extractApiMessage(message) {
   }
 }
 
-export function formatApiErrorTable(statusCode, rawMessage) {
+export function printResult(data) {
+  console.log(JSON.stringify({ ok: true, ...data }));
+}
+
+export function printApiError(statusCode, rawMessage) {
   const label = HTTP_STATUS_LABELS[statusCode] || `HTTP ${statusCode}`;
   const apiMsg = extractApiMessage(rawMessage);
-  const codeDesc = apiMsg ? `${statusCode} — ${label} (${apiMsg})` : `${statusCode} — ${label}`;
-
-  const W = 56;
-
-  function row(text) {
-    // text: visible string, no ANSI codes
-    return `│  ${text}${" ".repeat(Math.max(0, W - 2 - [...text].length))}│`;
-  }
-
-  function sep(l, m, r) {
-    return `│${l}${m.repeat(W - 2)}${r}│`;
-  }
-
-  const lines = [
-    sep("┌", "─", "┐"),
-    row(""),
-    row("API 调用失败"),
-    row(""),
-    sep("├", "─", "┤"),
-    row(""),
-    row("由于计费策略或账户原因，API 暂不可用。"),
-    row("请联系销售 / 管理员："),
-    row(""),
-    row("18120559523  管桦"),
-    row(""),
-    sep("├", "─", "┤"),
-    row(""),
-    // Error code line — red, visible width calculated first
-    // placeholder, built below
-    row(""),
-    sep("└", "─", "┘"),
-  ];
-
-  const codePrefix = "错误码：";
-  const codeVisible = [...(codePrefix + codeDesc)].length;
-  const codeLeft = `│  ${RED}${codePrefix}`;
-  const codeRight = `${" ".repeat(Math.max(0, W - 2 - codeVisible))}${RESET}│`;
-  lines[lines.length - 2] = `${codeLeft}${codeDesc}${codeRight}`;
-
-  console.error(lines.join("\n"));
+  console.log(JSON.stringify({
+    ok: false,
+    error: {
+      code: "API_ERROR",
+      statusCode,
+      label,
+      message: apiMsg || rawMessage,
+    },
+  }));
 }

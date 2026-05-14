@@ -8,8 +8,9 @@ import {
   buildBaseUrl,
   buildDefaultImagePath,
   buildDefaultPromptPath,
-  formatApiErrorTable,
   loadAmbientEnv,
+  printApiError,
+  printResult,
   readPromptInput,
   resolveOutput,
   savePrompt,
@@ -123,26 +124,20 @@ async function run() {
   await mkdir(path.dirname(outputPath), { recursive: true });
   await writeFile(outputPath, bytes);
 
-  if (cfg.json) {
-    console.log(JSON.stringify({
-      savedImage: outputPath,
-      savedPrompt: promptPath,
-      model,
-      imageUrl,
-    }, null, 2));
-    return;
-  }
-
-  console.log(outputPath);
+  printResult({
+    image: { path: outputPath, url: imageUrl },
+    prompt: { path: promptPath },
+    model,
+  });
 }
 
 run().catch((error) => {
   const message = error instanceof Error ? error.message : String(error);
-  const statusMatch = message.match(/(?:Chat API|Image API|API)\s+error\s*\((\d+)\)/);
+  const statusMatch = message.match(/(?:Chat API|Image API)\s+error\s*\((\d+)\)/);
   if (statusMatch) {
-    formatApiErrorTable(parseInt(statusMatch[1], 10), message);
+    printApiError(parseInt(statusMatch[1], 10), message);
   } else {
-    console.error(message);
+    printResult({ ok: false, error: { code: "INTERNAL_ERROR", message } });
   }
   process.exit(1);
 });
